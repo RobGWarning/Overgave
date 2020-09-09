@@ -4,88 +4,51 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Overgave"
-        xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         mc:Ignorable="d"
-        Title="TS Overgave" Height="750" Width="1500" Icon="/Views/klm-airlines.png">
+        Title="TS Overgave" Height="750" Width="1500" Icon="/Views/klm-airlines.png" ShowInTaskbar="True">
+    
     <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top" >
-            <ToolBar Band="1" BandIndex="1" Background="CornflowerBlue">
-                <ItemsControl>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <Label Content="B737"/>
-                        <Label Content="B747" Grid.Row="1"/>
-                        <Label Content="B777" Grid.Row="2"/>
-                        <Label Content="B787" Grid.Column="2"/>
-                        <Label Content="A330" Grid.Row="1" Grid.Column="2"/>
-                        <Label Content="Select Aircraft Type" Grid.Row="3" Grid.ColumnSpan="4" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                        <CheckBox IsChecked="{Binding B737selected}" x:Name="B737Chk" Grid.Column="1" VerticalContentAlignment="Center"/>
-                        <CheckBox IsChecked="{Binding B747selected}" x:Name="B747Chk" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center"/>
-                        <CheckBox IsChecked="{Binding B777selected}" x:Name="B777Chk" Grid.Column="1" Grid.Row="2" VerticalContentAlignment="Center"/>
-                        <CheckBox IsChecked="{Binding B787selected}" x:Name="B787Chk" Grid.Column="3" VerticalContentAlignment="Center"/>
-                        <CheckBox IsChecked="{Binding A330selected}" x:Name="A330Chk" Grid.Column="3" Grid.Row="1" VerticalContentAlignment="Center"/>
-                    </Grid>
-                </ItemsControl>
-                <Separator/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="90"/>
-                        <ColumnDefinition Width="30"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="22"/>
-                    </Grid.RowDefinitions>
-                    <Label Content="All records" HorizontalContentAlignment="Right"/>
-                    <Label Content="Open records" Grid.Row="1" HorizontalContentAlignment="Right"/>
-                    <Label Content="Print records" Grid.Row="2" HorizontalContentAlignment="Right"/>
-                    <Label Content="Show" Grid.Row="3" Grid.ColumnSpan="4" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                    <RadioButton GroupName="showgroup" x:Name="allrecChk" IsChecked="True" Grid.Column="1"  VerticalContentAlignment="Center"/>
-                    <RadioButton GroupName="showgroup" x:Name="openrecChk" Grid.Column="1" Grid.Row="1"  VerticalContentAlignment="Center"/>
-                    <RadioButton GroupName="showgroup" x:Name="printrecChk" Grid.Column="1" Grid.Row="2"  VerticalContentAlignment="Center"/>
-                </Grid>
-                <Separator/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="22"/>
-                    </Grid.RowDefinitions>
-                    <Label Content="Registration:" HorizontalContentAlignment="Right"/>
-                    <Label Content="ATA:" Grid.Row="1" HorizontalContentAlignment="Right"/>
-                    <Label Content="SubATA:" Grid.Row="2" HorizontalContentAlignment="Right"/>
-                    <Label Content="filter" Grid.Row="3" Grid.ColumnSpan="2" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                    <ComboBox Grid.Column="1" 
-                              ItemsSource="{Binding AircraftList}"
-                              DisplayMemberPath="Registration"
-                              SelectedValuePath="Registration"/>
-                    <ComboBox ItemsSource="{Binding ATAList}"
-                              DisplayMemberPath="AtaDescription"
-                              SelectedValuePath="ATA"
-                              Grid.Row="1" Grid.Column="1" Width="100"/>
-                    <ComboBox Grid.Row="2" Grid.Column="1" Width="100" IsEnabled="False"/>
-                </Grid>
-                <Separator/>
-            </ToolBar>
-        </ToolBarTray>
+        <Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
+            <Ribbon.HelpPaneContent>
+                <RibbonButton Label="Help" SmallImageSource="/Views/help.png"  />
+            </Ribbon.HelpPaneContent>
+            <Ribbon.ApplicationMenu>
+                <RibbonApplicationMenu KeyTip="F">
+                    <RibbonApplicationMenuItem Header="Options" ImageSource="/Views/Options.png" />
+                    <RibbonApplicationMenuItem Header="Exit" ImageSource="/Views/Exit.png" />
+                </RibbonApplicationMenu>
+            </Ribbon.ApplicationMenu>
+            <RibbonTab Header="Overgave" KeyTip="A" >
+                <RibbonGroup x:Name="ACType" Header="AC-Types">
+                    <RibbonCheckBox x:Name="B737Chk" Label="B737"/>
+                    <RibbonCheckBox x:Name="B747Chk" Label="B747"/>
+                    <RibbonCheckBox x:Name="B777Chk" Label="B777"/>
+                    <RibbonCheckBox x:Name="B787Chk" Label="B787"/>
+                    <RibbonCheckBox x:Name="A330Chk" Label="A330"/>
+                </RibbonGroup>
+                <RibbonGroup x:Name="Show" Header="Show">
+                    <RibbonRadioButton Label="All items" Width="120"/>
+                    <RibbonRadioButton Label="Open items" Width="120"/>
+                    <RibbonRadioButton Label="Open + Print items" Width="120"/>
+                </RibbonGroup>
+                <RibbonGroup x:Name="Filter" Header="Filter" HorizontalAlignment="Right">
+                    <StackPanel HorizontalAlignment="Right">
+                        <RibbonTextBox Label="Registratie:" x:Name="RegistratieTB" 
+                                       TextChanged="RegistratieTB_TextChanged" 
+                                       GotFocus="RegistratieTB_GotFocus"
+                                       KeyDown="RegistratieTB_KeyDown"/>
+                        <RibbonComboBox Label="ATA" SelectionBoxWidth="105" >
+                            <RibbonGallery SelectedValuePath="ATA" >
+                                <RibbonGalleryCategory ItemsSource="{Binding ATAList}" DisplayMemberPath="AtaDescription"/>
+                            </RibbonGallery>
+                        </RibbonComboBox>
+                        <RibbonComboBox Label="Sub-Ata" x:Name="SubAtaCmb"/>
+                    </StackPanel>
+                    <RibbonButton LargeImageSource="/Views/Filter.png"/>
+                </RibbonGroup>
+            </RibbonTab>
+        </Ribbon>
+        
         <StatusBar DockPanel.Dock="Bottom" Height="20" Background="CornflowerBlue" />
         <Grid>
             <TabControl>

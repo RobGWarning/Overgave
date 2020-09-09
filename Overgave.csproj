@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Exit.png" />
+    <None Remove="Views\Filter.png" />
+    <None Remove="Views\help.png" />
     <None Remove="Views\klm-airlines.png" />
+    <None Remove="Views\Options.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +29,11 @@
 
   <ItemGroup>
     <Resource Include="resources\Icons\klm-airlines.png" />
+    <Resource Include="Views\Exit.png" />
+    <Resource Include="Views\Filter.png" />
+    <Resource Include="Views\help.png" />
     <Resource Include="Views\klm-airlines.png" />
+    <Resource Include="Views\Options.png" />
   </ItemGroup>
 
 </Project>
