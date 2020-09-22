@@ -28,13 +28,13 @@ namespace Overgave
         public MainWindow()
         {
             MainWindowViewModel viewModel = new MainWindowViewModel();
-            
+
             InitializeComponent();
 
             DataContext = viewModel;
 
             //Maak een lijst met alle registraties.
-            using(OvergaveContext _db = new OvergaveContext())
+            using (OvergaveContext _db = new OvergaveContext())
             {
                 RegistratieLijst = (from r in _db.Aircraft
                                     select r.Registration).ToList();

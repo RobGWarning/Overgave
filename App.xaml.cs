@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Overgave.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Overgave.Models;
 
 namespace Overgave
 {
@@ -21,7 +21,7 @@ namespace Overgave
             //Als hij wel in de tabel voorkomt wordt het MainWindow geopend.
             string currentUserName = Environment.UserName; //currentUserName wordt de inlog naam van de computer gebruiker.
             App.Current.Properties["CurrentUserName"] = currentUserName; //store the user in a global variable for future use.
-            using(OvergaveContext _db = new OvergaveContext())
+            using (OvergaveContext _db = new OvergaveContext())
             {
                 TS overgaveUser = (from u in _db.Ts
                                    where u.Klmid == currentUserName
@@ -33,11 +33,10 @@ namespace Overgave
                 }
                 else
                 {
-                    MessageBox.Show("Welkom " + overgaveUser.Name);
+                    //MessageBox.Show("Welkom " + overgaveUser.Name);
                     new MainWindow().Show();
                 }
             }
-            
         }
     }
 }

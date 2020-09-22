@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
 namespace Overgave.Models
 {
-    [Table("ACTypes")]
     public partial class Actype
     {
         public Actype()
         {
             Aircraft = new HashSet<Aircraft>();
+            DefaultUserTypes = new HashSet<DefaultUserType>();
+            SubAta = new HashSet<SubAta>();
+            SubTypes = new HashSet<SubType>();
         }
 
-        [Key]
-        [Column("ACTypes")]
-        public long Actypes { get; set; }
-        [Required]
-        [StringLength(10)]
-        public string TypeName { get; set; }
-        [StringLength(10)]
-        public string SubType { get; set; }
+        public string Actypes { get; set; }
 
-        [InverseProperty("ActypeNavigation")]
         public virtual ICollection<Aircraft> Aircraft { get; set; }
+        public virtual ICollection<DefaultUserType> DefaultUserTypes { get; set; }
+        public virtual ICollection<SubAta> SubAta { get; set; }
+        public virtual ICollection<SubType> SubTypes { get; set; }
     }
 }

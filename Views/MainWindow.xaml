@@ -19,12 +19,19 @@
                 </RibbonApplicationMenu>
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Overgave" KeyTip="A" >
-                <RibbonGroup x:Name="ACType" Header="AC-Types">
-                    <RibbonCheckBox x:Name="B737Chk" Label="B737"/>
-                    <RibbonCheckBox x:Name="B747Chk" Label="B747"/>
-                    <RibbonCheckBox x:Name="B777Chk" Label="B777"/>
-                    <RibbonCheckBox x:Name="B787Chk" Label="B787"/>
-                    <RibbonCheckBox x:Name="A330Chk" Label="A330"/>
+                <RibbonGroup Header="AC-Types">
+                    <ItemsControl ItemsSource="{Binding CBItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Content }" IsChecked="{Binding IsChecked}" Margin="3,3,3,3"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
                 </RibbonGroup>
                 <RibbonGroup x:Name="Show" Header="Show">
                     <RibbonRadioButton Label="All items" Width="120"/>
@@ -44,75 +51,29 @@
                         </RibbonComboBox>
                         <RibbonComboBox Label="Sub-Ata" x:Name="SubAtaCmb"/>
                     </StackPanel>
-                    <RibbonButton LargeImageSource="/Views/Filter.png"/>
+                    <StackPanel>
+                        <TextBlock Text="Text:"/>
+                        <RibbonTextBox TextBoxWidth="250" MinLines="2" >
+                            
+                        </RibbonTextBox>
+                    </StackPanel>
+                    <RibbonButton Content="Filter" LargeImageSource="/Views/Filter.png" BorderBrush="#FF0C0000" Background="#FF86B8EA"/>
                 </RibbonGroup>
             </RibbonTab>
         </Ribbon>
         
         <StatusBar DockPanel.Dock="Bottom" Height="20" Background="CornflowerBlue" />
         <Grid>
-            <TabControl>
-                <TabItem Header="B737">
-                    <ListBox>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <WrapPanel>
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,14,0">
-                                            <Border BorderThickness="1" BorderBrush="Black">
-                                                <StackPanel>
-                                                    <Label>Id: </Label>
-                                                    <TextBlock Text="{Binding ItemId}" Margin="10,0,10,0"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <Border BorderThickness="1" BorderBrush="Black">
-                                                <StackPanel>
-                                                    <Label>Registration: </Label>
-                                                    <TextBlock Text="{Binding Acreg}" Margin="10,0,10,0"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <Border BorderThickness="1" BorderBrush="Black">
-                                                <StackPanel>
-                                                    <Label>ATA:</Label>
-                                                    <TextBlock Text="{Binding Ata}" Margin="10,0,10,0"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <Border BorderThickness="1" BorderBrush="Black">
-                                                <StackPanel>
-                                                    <Label>Sub Ata:</Label>
-                                                    <TextBlock Text="{Binding SubAta}" Margin="10,0,10,0"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <Border BorderThickness="1" BorderBrush="Black">
-                                                <StackPanel>
-                                                    <Label>Initiator:</Label>
-                                                    <TextBlock Text="{Binding Initiator}" Margin="10,0,10,0"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <Border BorderThickness="1" BorderBrush="Black">
-                                                <TextBlock Margin="10,0,8,0">Status: Open</TextBlock>
-                                            </Border>
-                                            <Border BorderThickness="2" BorderBrush="Red">
-                                                <StackPanel>
-                                                    <Label>Status:</Label>
-                                                    <TextBlock Text="{Binding ItemStatus}" Margin="10,0,10,0"/>
-                                                </StackPanel>
-                                            </Border>
-                                        </StackPanel>
-                                        <Border BorderThickness="1" BorderBrush="Black">
-                                            <TextBlock Text="{Binding Text}" MinHeight="30" MaxHeight="100" TextWrapping="Wrap"/>
-                                        </Border>
-                                    </StackPanel>
-                                </WrapPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-         
-                    </ListBox>
-                </TabItem>
-                <TabItem Header="B787">
-
-                </TabItem>
-
+            <TabControl ItemsSource="{Binding Tabs}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Header}"/>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
             </TabControl>
         </Grid>
         

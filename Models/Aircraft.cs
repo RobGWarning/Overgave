@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -15,22 +12,15 @@ namespace Overgave.Models
             Items = new HashSet<Item>();
         }
 
-        [Key]
-        [StringLength(10)]
         public string Registration { get; set; }
-        [Column("ACType")]
-        public long Actype { get; set; }
-        [StringLength(10)]
+        public string Actype { get; set; }
+        public long? SubType { get; set; }
         public string Effectifity { get; set; }
-        [StringLength(10)]
         public string Etops { get; set; }
-        [StringLength(10)]
         public string Status { get; set; }
 
-        [ForeignKey(nameof(Actype))]
-        [InverseProperty("Aircraft")]
         public virtual Actype ActypeNavigation { get; set; }
-        [InverseProperty(nameof(Item.AcregNavigation))]
+        public virtual SubType SubTypeNavigation { get; set; }
         public virtual ICollection<Item> Items { get; set; }
     }
 }

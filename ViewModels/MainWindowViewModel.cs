@@ -6,6 +6,10 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows.Data;
 using System.Data;
+using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using System.Diagnostics;
 
 namespace Overgave.ViewModels
 {
@@ -13,23 +17,22 @@ namespace Overgave.ViewModels
     {
         private List<Aircraft> _aircraftList;
         private List<MVAta> _ataList;
-        private List<SubATA> _subAtaList;
-        private bool _B737selected;
-        private bool _B747selected;
-        private bool _B787selected;
-        private bool _B777selected;
-        private bool _A330selected;
+        private List<SubAta> _subAtaList;
+        private List<CBItem> _cbItems = new List<CBItem>();
+        private ObservableCollection<TabViewModel> _tabs;
+
 
         public MainWindowViewModel()
         {
             LoadInitialData();
         }
+
+        #region Models
         public class MVAta
         {
             public int ATA { get; set; }
             public string AtaDescription { get; set; }
         }
-
 
         public List<Aircraft> AircraftList
         {
@@ -41,104 +44,35 @@ namespace Overgave.ViewModels
             get { return _ataList; }
         }
 
-        public List<SubATA> SubATAList
+        public List<SubAta> SubATAList
         {
             get { return _subAtaList; }
         }
 
-        public bool B737selected
+        public class CBItem
         {
-            get { return _B737selected; }
-            set
-            {
-                if (_B737selected == value) 
-                {
-                    return;
-                }
-                else
-                {
-                    _B737selected = value;
-                    RaisePropertyChanged("B737selected");
-                }
-                
-            }
+            public string Content { get; set; }
+            public bool IsChecked { get; set; }
         }
 
-        public bool B747selected
+        public List<CBItem> CBItems
         {
-            get { return _B747selected; }
-            set
-            {
-                if (_B747selected == value)
-                {
-                    return;
-                }
-                else
-                {
-                    _B747selected = value;
-                    RaisePropertyChanged("B747selected");
-                }
-
-            }
+            get { return _cbItems; }
         }
 
-        public bool B777selected
+        public ObservableCollection<TabViewModel> tabs 
         {
-            get { return _B777selected; }
-            set
-            {
-                if (_B777selected == value)
-                {
-                    return;
-                }
-                else
-                {
-                    _B777selected = value;
-                    RaisePropertyChanged("B777selected");
-                }
-
-            }
+            get { return _tabs; }
         }
+        #endregion
 
-        public bool B787selected
-        {
-            get { return _B787selected; }
-            set
-            {
-                if (_B787selected == value)
-                {
-                    return;
-                }
-                else
-                {
-                    _B787selected = value;
-                    RaisePropertyChanged("B787selected");
-                }
-
-            }
-        }
-
-        public bool A330selected
-        {
-            get { return _A330selected; }
-            set
-            {
-                if (_A330selected == value)
-                {
-                    return;
-                }
-                else
-                {
-                    _A330selected = value;
-                    RaisePropertyChanged("A330selected");
-                }
-
-            }
-        }
+        #region Commands
+        private ICommand _typeChecksChanged;
+        #endregion
 
         private void LoadInitialData()
         {
-            using(OvergaveContext _db = new OvergaveContext())
+            using (OvergaveContext _db = new OvergaveContext())
             {
                 _aircraftList = (from a in _db.Aircraft
                                  select a).ToList();
@@ -146,7 +80,7 @@ namespace Overgave.ViewModels
                 var alist = from at in _db.Ata
                             select at;
                 _ataList = new List<MVAta>();
-                foreach(var item in alist)
+                foreach (var item in alist)
                 {
                     MVAta mva = new MVAta();
                     mva.ATA = item.Ata;
@@ -156,21 +90,49 @@ namespace Overgave.ViewModels
 
                 _subAtaList = (from sa in _db.SubAta
                                select sa).ToList();
-                TS user = (from u in _db.Ts
-                           where u.Klmid == (string)App.Current.Properties["CurrentUserName"]
-                           select u).FirstOrDefault();
-                if(user !=null)
+
+                List<string> tabs = (from b in _db.DefaultUserTypes
+                           where b.Klmid == App.Current.Properties["CurrentUserName"]
+                           select b.Actype.Trim()).ToList();
+
+                List<string> types = (from t in _db.Actypes
+                            select t.Actypes.Trim()).ToList();
+
+                foreach (var t in types)
                 {
-                    B737selected = user.Def737;
-                    B747selected = user.Def747;
-                    B777selected = user.Def777;
-                    B787selected = user.Def787;
-                    A330selected = user.DefA330;
+                    CBItem cb = new CBItem();
+                    
+                    cb.Content = t;
+                    if (tabs.Contains(t))
+                    {
+                        cb.IsChecked = true;
+                    }
+                    else
+                    {
+                        cb.IsChecked = false;
+                    }
+                    _cbItems.Add(cb);
+                }
+            }
+            LoadTabs();
+        }
+
+        private void LoadTabs()
+        {
+            if(tabs == null)
+            {
+                _tabs = new ObservableCollection<TabViewModel>();
+            }
+            foreach(CBItem i in CBItems)
+            {
+                if(i.IsChecked == true)
+                {
+                    TabViewModel tvm = new TabViewModel();
+                    tvm.Header = i.Content;
+                    _tabs.Add(tvm);
                 }
             }
         }
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -178,6 +140,20 @@ namespace Overgave.ViewModels
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            VerifyPropertyName(propertyName);
+            var handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        [Conditional("DEBUG")]
+        private void VerifyPropertyName(string propertyName)
+        {
+            if (TypeDescriptor.GetProperties(this)[propertyName] == null)
+                throw new ArgumentNullException(GetType().Name + " does not contain property: " + propertyName);
         }
     }
 }

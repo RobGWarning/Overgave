@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Overgave
+namespace Overgave.Views
 {
     /// <summary>
-    /// Interaction logic for ItemList.xaml
+    /// Interaction logic for TypeTab.xaml
     /// </summary>
-    public partial class ItemList : UserControl
+    public partial class TypeTab : UserControl
     {
-        public ItemList()
+        public TypeTab()
         {
             InitializeComponent();
         }
