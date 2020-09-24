@@ -3,10 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Overgave"
+        xmlns:local="clr-namespace:Overgave" 
+        xmlns:local1="clr-namespace:Overgave.Views"
+        xmlns:vm="clr-namespace:Overgave.ViewModels"
         mc:Ignorable="d"
         Title="TS Overgave" Height="750" Width="1500" Icon="/Views/klm-airlines.png" ShowInTaskbar="True">
-    
+    <Window.Resources>
+        
+    </Window.Resources>
     <DockPanel>
         <Ribbon x:Name="Ribbon" DockPanel.Dock="Top">
             <Ribbon.HelpPaneContent>
@@ -20,10 +24,25 @@
             </Ribbon.ApplicationMenu>
             <RibbonTab Header="Overgave" KeyTip="A" >
                 <RibbonGroup Header="AC-Types">
-                    <ItemsControl ItemsSource="{Binding CBItems}">
+                    <ItemsControl x:Name="CBControl" ItemsSource="{Binding CBItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Content="{Binding Content }" IsChecked="{Binding IsChecked}" Margin="3,3,3,3"/>
+                                <CheckBox Command="{Binding Path=DataContext.TypeChanged, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                          Content="{Binding Content }" 
+                                          IsChecked="{Binding IsChecked, Mode=TwoWay, NotifyOnTargetUpdated=True}" 
+                                          Margin="3,3,3,3">
+                                    <CheckBox.Resources>
+                                        <local1:TypeChangedParameterConvertor x:Key="TypeChangedParameterConvertor"/>
+                                    </CheckBox.Resources>
+                                    <CheckBox.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource TypeChangedParameterConvertor}">
+                                            <MultiBinding.Bindings>
+                                                <Binding Path="IsChecked"/>
+                                                <Binding Path="Content"/>
+                                            </MultiBinding.Bindings>
+                                        </MultiBinding>
+                                    </CheckBox.CommandParameter>
+                                </CheckBox>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                         <ItemsControl.ItemsPanel>
@@ -64,7 +83,11 @@
         
         <StatusBar DockPanel.Dock="Bottom" Height="20" Background="CornflowerBlue" />
         <Grid>
-            <TabControl ItemsSource="{Binding Tabs}">
+            <TabControl ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab}">
+                <TabControl.Resources>
+                    <Style TargetType="local1:TypeTab">
+                    </Style>
+                </TabControl.Resources>
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Header}"/>
@@ -72,6 +95,7 @@
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
                     <DataTemplate>
+                        <TextBlock Text="Hallo"/>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>

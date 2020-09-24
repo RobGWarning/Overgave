@@ -14,7 +14,7 @@ using Accessibility;
 
 namespace Overgave.ViewModels
 {
-    public class TabViewModel : INotifyPropertyChanged
+    public class TypeTabViewModel : INotifyPropertyChanged
     {
         public string Header { get; set; }
         private bool _isSelected;
@@ -25,7 +25,10 @@ namespace Overgave.ViewModels
             set { _isSelected = value; }
         }
 
+        public TypeTabViewModel()
+        {
 
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

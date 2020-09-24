@@ -10,6 +10,9 @@ using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Globalization;
+using System.Windows;
 
 namespace Overgave.ViewModels
 {
@@ -19,11 +22,12 @@ namespace Overgave.ViewModels
         private List<MVAta> _ataList;
         private List<SubAta> _subAtaList;
         private List<CBItem> _cbItems = new List<CBItem>();
-        private ObservableCollection<TabViewModel> _tabs;
+        private static ObservableCollection<TypeTabViewModel> _tabs = new ObservableCollection<TypeTabViewModel>();
 
 
         public MainWindowViewModel()
         {
+            
             LoadInitialData();
         }
 
@@ -50,6 +54,7 @@ namespace Overgave.ViewModels
         }
 
         public class CBItem
+        //Check box item: checkbox data to select aircraft types
         {
             public string Content { get; set; }
             public bool IsChecked { get; set; }
@@ -58,16 +63,96 @@ namespace Overgave.ViewModels
         public List<CBItem> CBItems
         {
             get { return _cbItems; }
+            set
+            {
+                if (_cbItems != value)
+                {
+                    _cbItems = value;
+                    NotifyPropertyChanged("CBItems");
+                }
+            }
         }
 
-        public ObservableCollection<TabViewModel> tabs 
+        public ObservableCollection<TypeTabViewModel> Tabs
         {
             get { return _tabs; }
+            set
+            {
+                if (_tabs != value)
+                {
+                    _tabs = value;
+                    NotifyPropertyChanged("tabs");
+                }
+            }
         }
         #endregion
 
         #region Commands
-        private ICommand _typeChecksChanged;
+        private ICommand _typeChanged;
+        public ICommand TypeChanged
+        {
+            get
+            {
+                if (_typeChanged == null)
+                    _typeChanged = new TypeUpdater();
+                return _typeChanged;
+            }
+            set
+            {
+                _typeChanged = value;
+            }
+        }
+
+        class TypeUpdater : ICommand
+        {
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(object parameter)
+            {
+                CBItem Param = (CBItem)parameter;
+                string AcType = Param.Content;
+                bool Open = Param.IsChecked;
+
+                if (Open)
+                {
+                    bool IsIn = false;
+                    foreach (TypeTabViewModel tvm in _tabs)
+                    {
+                        if (tvm.Header == AcType)
+                        {
+                            IsIn = true;
+                        }
+                    }
+                    if (!IsIn)
+                    {
+                        TypeTabViewModel tvm = new TypeTabViewModel();
+                        tvm.Header = AcType;
+                        _tabs.Add(tvm);
+                    }
+                }
+                else //(close)
+                {
+                    foreach (TypeTabViewModel tvm in _tabs)
+                    {
+                        if (tvm.Header == AcType)
+                        {
+                            _tabs.Remove(tvm);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            public event EventHandler CanExecuteChanged
+            {
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
+            }
+        }
+
         #endregion
 
         private void LoadInitialData()
@@ -92,44 +177,30 @@ namespace Overgave.ViewModels
                                select sa).ToList();
 
                 List<string> tabs = (from b in _db.DefaultUserTypes
-                           where b.Klmid == App.Current.Properties["CurrentUserName"]
-                           select b.Actype.Trim()).ToList();
+                                     where b.Klmid == App.Current.Properties["CurrentUserName"]
+                                     select b.Actype.Trim()).ToList();
 
                 List<string> types = (from t in _db.Actypes
-                            select t.Actypes.Trim()).ToList();
+                                      select t.Actypes.Trim()).ToList();
 
                 foreach (var t in types)
                 {
                     CBItem cb = new CBItem();
-                    
+
                     cb.Content = t;
                     if (tabs.Contains(t))
                     {
                         cb.IsChecked = true;
+                        TypeTabViewModel tvm = new TypeTabViewModel();
+                        tvm.Header = t;
+                        _tabs.Add(tvm);
+                        tvm.IsSelected = true;
                     }
                     else
                     {
                         cb.IsChecked = false;
                     }
                     _cbItems.Add(cb);
-                }
-            }
-            LoadTabs();
-        }
-
-        private void LoadTabs()
-        {
-            if(tabs == null)
-            {
-                _tabs = new ObservableCollection<TabViewModel>();
-            }
-            foreach(CBItem i in CBItems)
-            {
-                if(i.IsChecked == true)
-                {
-                    TabViewModel tvm = new TabViewModel();
-                    tvm.Header = i.Content;
-                    _tabs.Add(tvm);
                 }
             }
         }
@@ -140,6 +211,14 @@ namespace Overgave.ViewModels
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void NotifyPropertyChanged(String info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
         }
 
         private void OnPropertyChanged(string propertyName)
